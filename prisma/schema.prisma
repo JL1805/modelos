@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model rel_rolemenu {
+    irolemenuid    Int    @id @default(autoincrement())
+    dtcreated      DateTime  @default(now())
+    dtupdated      DateTime?  @updatedAt
+    iroleid        Int 
+    imenuid        Int 
+
+    role           catroles     @relation(fields: [iroleid], references: [iroleid])
+    menu           catmenus     @relation(fields: [imenuid], references: [imenuid])
+    //@@index([iroleid, imenuid])
+    @@unique([iroleid, imenuid], name: "unique_role_menu")
+}
+
+model catroles {
+    iroleid        Int    @id @default(autoincrement())
+    dtcreated      DateTime  @default(now())
+    dtupdated      DateTime?  @updatedAt
+    vrole          String @db.VarChar(255)
+    vdescription   String? @db.VarChar(255)
+    ishowclient    Int @db.TinyInt @default(0)
+    iactivo        Int @db.TinyInt @default(1)
+    
+    rel_rolemenu   rel_rolemenu[]
+
+    //@@index([vrole])
+    @@unique([vrole])
+}
+
+model catmenus {
+    imenuid         Int    @id @default(autoincrement())
+    dtcreated       DateTime  @default(now())
+    dtupdated       DateTime?  @updatedAt
+    irouteid        Int?
+    imenusuperiorid Int?
+    iorden          Int
+    vNombreMenu     String @db.VarChar(255) 
+    vdescripcion    String @db.VarChar(255)
+    iactivo         Int @db.TinyInt @default(1)
+
+    rel_rolemenu   rel_rolemenu[]
+    //@@index([vNombreMenu])
+    @@unique([vNombreMenu])
+    //catmenus_route catmenus_route[] 
+}
+
+
+model catpersonas {
+    ipersonaid        Int @id @default(autoincrement())
+    dtcreated         DateTime @default(now())
+    dtupdated         DateTime? @updatedAt
+    vnombres          String? @db.VarChar(255)
+    vapellidos        String? @db.VarChar(255)
+    vcelular          String @db.VarChar(15)
+    iactivo           Int @db.TinyInt @default(1)
+}
