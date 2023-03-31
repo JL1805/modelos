@@ -19,7 +19,7 @@ model rel_rolemenu {
 
     role           catroles     @relation(fields: [iroleid], references: [iroleid])
     menu           catmenus     @relation(fields: [imenuid], references: [imenuid])
-    //@@index([iroleid, imenuid])
+
     @@unique([iroleid, imenuid], name: "unique_role_menu")
 }
 
@@ -34,7 +34,6 @@ model catroles {
     
     rel_rolemenu   rel_rolemenu[]
 
-    //@@index([vrole])
     @@unique([vrole])
 }
 
@@ -42,17 +41,30 @@ model catmenus {
     imenuid         Int    @id @default(autoincrement())
     dtcreated       DateTime  @default(now())
     dtupdated       DateTime?  @updatedAt
-    irouteid        Int?
+    irouteid        Int
     imenusuperiorid Int?
     iorden          Int
     vNombreMenu     String @db.VarChar(255) 
     vdescripcion    String @db.VarChar(255)
     iactivo         Int @db.TinyInt @default(1)
 
-    rel_rolemenu   rel_rolemenu[]
-    //@@index([vNombreMenu])
+    catroutes       catroutes     @relation(fields: [irouteid], references: [irouteid])
+
+    rel_rolemenu    rel_rolemenu[]
     @@unique([vNombreMenu])
-    //catmenus_route catmenus_route[] 
+}
+
+
+model catroutes {
+    irouteid        Int @id @default(autoincrement())
+    dtcreated       DateTime @default(now())
+    dtupdated       DateTime? @updatedAt
+    vroute          String? @db.VarChar(255)
+    vfeacture       String? @db.VarChar(255)
+    iactivo         Int @db.TinyInt @default(1)
+    catmenus        catmenus[] 
+
+    @@unique([vroute, vfeacture], name: "unique_vroute_vfeacture")
 }
 
 
